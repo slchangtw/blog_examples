@@ -1,6 +1,6 @@
 import pytest
 
-from duplicate_remover import DuplicateRemover
+from src.duplicate_remover import DuplicateRemover
 
 @pytest.fixture(name="duplicate_remover")
 def fixture_duplicate_remover():
