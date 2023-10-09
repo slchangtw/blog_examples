@@ -5,10 +5,10 @@ from typing import Optional
 import boto3
 from boto3.dynamodb.conditions import Key
 
-DYNAMODB_TABLE = "reverted_texts"
+DYNAMODB_TABLE = "reversed_texts"
 
 
-class TextReverter:
+class TextManipulator:
     def __init__(self):
         self._dynamodb_table = self._get_dynamodb_table()
 
@@ -21,7 +21,7 @@ class TextReverter:
         )
         return dynamodb.Table(DYNAMODB_TABLE)
 
-    def _revert_text(self, text: str) -> str:
+    def _reverse_text(self, text: str) -> str:
         return text[::-1]
 
     def query_dynamodb(self, text: str) -> Optional[str]:
@@ -32,24 +32,24 @@ class TextReverter:
         )
 
         if response["Count"] != 0:
-            return response["Items"][0]["reverted_text"]
+            return response["Items"][0]["reversed_text"]
 
         return None
 
-    def write_dynamodb(self, text: int, reverted_text: str) -> None:
+    def write_dynamodb(self, text: int, reversed_text: str) -> None:
         self._dynamodb_table.put_item(
             Item={
                 "text": text,
                 "updated_at": datetime.now().isoformat(),
-                "reverted_text": reverted_text,
+                "reversed_text": reversed_text,
             }
         )
 
-    def revert(self, text: str) -> str:
-        if reverted_text := self.query_dynamodb(text):
-            return reverted_text
+    def reverse(self, text: str) -> str:
+        if reversed_text := self.query_dynamodb(text):
+            return reversed_text
 
-        reverted_text = self._revert_text(text)
-        self.write_dynamodb(text, reverted_text)
+        reversed_text = self._reverse_text(text)
+        self.write_dynamodb(text, reversed_text)
 
-        return reverted_text
+        return reversed_text

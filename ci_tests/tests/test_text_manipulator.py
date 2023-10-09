@@ -2,7 +2,7 @@ import os
 
 import boto3
 
-from src.text_reverter import TextReverter
+from src.text_manipulator import TextManipulator
 
 
 def create_table() -> None:
@@ -12,7 +12,7 @@ def create_table() -> None:
         endpoint_url=os.environ.get("AWS_ENDPOINT_URL"),
     )
     dynamodb.create_table(
-        TableName="reverted_texts",
+        TableName="reversed_texts",
         KeySchema=[
             {"AttributeName": "text", "KeyType": "HASH"},  # Partition_key
             {"AttributeName": "updated_at", "KeyType": "RANGE"},  # Sort_key
@@ -31,21 +31,21 @@ def delete_table() -> None:
         region_name=os.environ.get("AWS_REGION"),
         endpoint_url=os.environ.get("AWS_ENDPOINT_URL"),
     )
-    dynamodb.Table("reverted_texts").delete()
+    dynamodb.Table("reversed_texts").delete()
 
 
-def test_text_reverter():
+def test_text_manipulator():
     try:
         create_table()
 
-        text_reverter = TextReverter()
+        text_manipulator = TextManipulator()
 
-        assert text_reverter.query_dynamodb("grandpa") is None
+        assert text_manipulator.query_dynamodb("grandpa") is None
 
-        assert text_reverter.revert("grandpa") == "apdnarg"
-        assert text_reverter.query_dynamodb("grandpa") == "apdnarg"
+        assert text_manipulator.reverse("grandpa") == "apdnarg"
+        assert text_manipulator.query_dynamodb("grandpa") == "apdnarg"
 
-        text_reverter.write_dynamodb("grandpa", "grandson")
-        assert text_reverter.query_dynamodb("grandpa") == "grandson"
+        text_manipulator.write_dynamodb("grandpa", "grandson")
+        assert text_manipulator.query_dynamodb("grandpa") == "grandson"
     finally:
         delete_table()
