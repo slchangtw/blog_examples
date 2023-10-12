@@ -2,9 +2,11 @@ import pytest
 
 from src.duplicate_remover import DuplicateRemover
 
+
 @pytest.fixture(name="duplicate_remover")
 def fixture_duplicate_remover():
     return DuplicateRemover()
+
 
 @pytest.mark.parametrize(
     "input, expected",
@@ -17,6 +19,7 @@ def fixture_duplicate_remover():
 )
 def test_remove_duplicates_from_list(input, expected, duplicate_remover):
     assert duplicate_remover.remove_duplicates_from_list(input) == expected
+
 
 @pytest.mark.parametrize(
     "input, expected",

@@ -2,6 +2,7 @@ import pytest
 
 from remove_duplicates import remove_duplicates
 
+
 @pytest.mark.parametrize(
     "input, expected",
     [
