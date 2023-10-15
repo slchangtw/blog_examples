@@ -1,0 +1,49 @@
+name: Run tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  run_test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    env:
+      COMPOSE_FILE: docker-compose.yml
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+    
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+      
+      - name: Upgrade pip
+        run: |
+          pip install -U pip
+
+      - name: Run black check
+        run: |
+          pip install black==23.3.0
+          black --check .
+      
+      - name: Run ruff check
+        run: |
+          pip install ruff==0.0.278
+          ruff --check .
+
+      - name: Docker compose build
+        run: |
+          docker-compose -f $COMPOSE_FILE build
+
+      - name: Run tests
+        run: |
+          docker-compose -f $COMPOSE_FILE run --rm tests
+
+      - name: Clean up
+        run: |
+          docker-compose -f $COMPOSE_FILE down
