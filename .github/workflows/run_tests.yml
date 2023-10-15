@@ -2,9 +2,13 @@ name: Run tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
+
+defaults:
+  run:
+    working-directory: ci_tests
 
 jobs:
   run_test:
@@ -20,7 +24,7 @@ jobs:
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: 3.10
+          python-version: 3.10.13
       
       - name: Upgrade pip
         run: |
@@ -34,7 +38,7 @@ jobs:
       - name: Run ruff check
         run: |
           pip install ruff==0.0.278
-          ruff --check .
+          ruff check .
 
       - name: Docker compose build
         run: |
