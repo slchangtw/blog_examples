@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Send an email to the email address defined in the environment variable
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 128
+
+Resources:
+  LambdaExecRoles:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  
+  SendEmailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "send-email-${Environment}"
+      CodeUri: src/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Environment:
+        Variables:
+          EMAIL_ADDRESS: !FindInMap [EmailAddress, !Ref Environment, status]
+
+Parameters:
+  Environment:
+    Type: String
+    Default: "test"
+    AllowedValues:
+      - test
+      - prod
+
+Mappings:
+  EmailAddress:
+    test:
+      status: "test@gmail.com"
+    prod:
+      status: "prod@gmail.com"

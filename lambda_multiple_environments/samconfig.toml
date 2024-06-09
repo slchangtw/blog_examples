@@ -1,0 +1,43 @@
+version = 0.1
+
+[default]
+[default.global.parameters]
+s3_bucket = "aws-lambda-deployment-202405" # A bucket already exists in your S3 bucket list in your AWS account.
+s3_prefix = "send-email-prod"
+parameter_overrides = "Environment=prod"
+
+[default.build.parameters]
+cached = true
+parallel = true
+use_container = true
+skip_pull_image = true
+
+[default.deploy.parameters]
+stack_name = "send-email-prod"
+capabilities = "CAPABILITY_IAM"
+template_file = "packaged.yaml"
+confirm_changeset = true
+
+[default.package.parameters]
+output_template_file = "packaged.yaml"
+
+[test]
+[test.global.parameters]
+s3_bucket = "aws-lambda-deployment-202405" # A bucket already exists in your S3 bucket list in your AWS account.
+s3_prefix = "send-email-test"
+parameter_overrides = "Environment=test"
+
+[test.build.parameters]
+cached = true
+parallel = true
+use_container = true
+skip_pull_image = true
+
+[test.deploy.parameters]
+stack_name = "send-email-test"
+capabilities = "CAPABILITY_IAM"
+template_file = "packaged.yaml"
+confirm_changeset = true
+
+[test.package.parameters]
+output_template_file = "packaged.yaml"
